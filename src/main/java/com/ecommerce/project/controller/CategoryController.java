@@ -1,6 +1,8 @@
 package com.ecommerce.project.controller;
 
 import com.ecommerce.project.model.Category;
+import com.ecommerce.project.payload.CategoryDto;
+import com.ecommerce.project.payload.CategoryResponse;
 import com.ecommerce.project.service.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -25,13 +27,13 @@ public class CategoryController {
     }
 
     @GetMapping("/api/public/categories")
-    public ResponseEntity<List<Category>> getAllCategory(){
+    public ResponseEntity<CategoryResponse> getAllCategory(){
         return new ResponseEntity<>(categoryService.getAllCategories(), HttpStatus.OK);
     }
     @PostMapping("/api/public/categories")
-    public ResponseEntity<String> createCategory(@Valid  @RequestBody Category category){
-        categoryService.createCategory(category);
-        return new ResponseEntity<>("Category created successfully", HttpStatus.CREATED);
+    public ResponseEntity<CategoryDto> createCategory(@Valid  @RequestBody CategoryDto categoryDto){
+        CategoryDto savedCategoryDto=categoryService.createCategory(categoryDto);
+        return new ResponseEntity<>(savedCategoryDto, HttpStatus.CREATED);
     }
     @DeleteMapping("/api/admin/categories/{categoryId}")
     public ResponseEntity<String> deleteCategory(@PathVariable Long categoryId)
