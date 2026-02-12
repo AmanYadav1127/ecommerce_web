@@ -32,8 +32,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize) {
-        Pageable pageDeatils= PageRequest.of(pageNumber, pageSize);
-        Page<Category>categoryPage=categoryRepository.findAll(pageDeatils);
+        Pageable pageDetails= PageRequest.of(pageNumber, pageSize);
+        Page<Category>categoryPage=categoryRepository.findAll(pageDetails);
         List<Category> categories=categoryPage.getContent();
         if(categories.isEmpty()){
             throw new APIException("No categories found !!!");
