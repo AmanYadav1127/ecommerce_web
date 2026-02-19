@@ -43,4 +43,30 @@ public class ProductServiceImpl implements ProductService {
             productResponse.setContent(productDTOS);//ProductResponse ke andr list ka naam content haii isliye
             return productResponse;
     }
+
+    @Override
+    public ProductResponse getProductsByCategory(Long categoryId) {
+        Category category=categoryRepository.findById(categoryId).orElseThrow(()->
+                new ResourceNotFoundException("Category","CategoryId",categoryId));
+        List<Product> products=productRepository.findByCategoryOrderByPriceAsc(category);
+        List<ProductDTO> productDTOS=products.stream().map(product -> modelMapper.map(product, ProductDTO.class))
+                .toList();
+        ProductResponse productResponse=new ProductResponse();
+        productResponse.setContent(productDTOS);
+        return productResponse;
+    }
+
+    @Override
+    public ProductResponse getProductsByKeyword(String keyword) {
+        List<Product> products=productRepository.findByProductNameLikeIgnoreCase('%'+keyword+'%');
+//        List<Product> filteredProducts=products.stream().filter(product -> product.getProductName().toLowerCase().contains(keyword.toLowerCase()))
+//                .toList();  //ye use tb krte jab findbyall krte..ab findByProductName...ye wale
+//                naam se hi repository me database ko filter kr dega..its
+//                jpa magic..query will be generated automaticallly
+        List<ProductDTO> productDTOS=products.stream().map(product -> modelMapper.map(product, ProductDTO.class))
+                .toList();
+        ProductResponse productResponse=new ProductResponse();
+        productResponse.setContent(productDTOS);
+        return productResponse;
+    }
 }
