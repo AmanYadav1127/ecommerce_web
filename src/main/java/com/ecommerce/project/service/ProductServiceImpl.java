@@ -132,7 +132,7 @@ public class ProductServiceImpl implements ProductService {
         String randomId = UUID.randomUUID().toString();
         //mat.jpg---->1234---->1234.jpg
         String fileName = randomId.concat(originalFileName.substring(originalFileName.lastIndexOf('.')));
-        String filePath = path + File.pathSeparator + fileName;
+        String filePath = path + File.separator + fileName;
         File folder = new File(path); //images/ folder ka File object banaya
         if (!folder.exists()) {
             folder.mkdir();
