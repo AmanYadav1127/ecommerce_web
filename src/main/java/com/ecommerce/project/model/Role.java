@@ -16,7 +16,8 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "role_id")
     private Integer roleId;
-    @ToString.Exclude
+    @ToString.Exclude //is annotation ka kaam hai ki jab hum Role class ka toString method call kare to roleName field ko ignore kar de,
+    // isse circular reference se bachne me madad milti hai
     @Enumerated(EnumType.STRING)
     @Column(length = 20,name = "role_name")
     private AppRole roleName;
