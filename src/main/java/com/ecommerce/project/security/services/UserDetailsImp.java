@@ -2,6 +2,7 @@ package com.ecommerce.project.security.services;
 
 import com.ecommerce.project.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 public class UserDetailsImp implements UserDetails {
     private static final Long serialVersionUID = 1L;
+    @Getter
     private Long id;
     private String email;
     private String username;
@@ -54,6 +56,7 @@ public class UserDetailsImp implements UserDetails {
         return username;
     }
 
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -84,4 +87,5 @@ public class UserDetailsImp implements UserDetails {
         return true;
 
     }
+
 }
