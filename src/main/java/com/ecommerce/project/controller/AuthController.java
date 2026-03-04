@@ -49,4 +49,8 @@ public class AuthController {
         UserInfoResponse response=new UserInfoResponse(userDetails.getId(),jwtToken,userDetails.getUsername(), roles);
         return ResponseEntity.ok(response); //return the response with JWT token and user details
     }
+    @PostMapping("/signup")
+    public ResponseEntity<?> registerUser(@RequestBody LoginRequest signUpRequest) {
+
+    }
 }
