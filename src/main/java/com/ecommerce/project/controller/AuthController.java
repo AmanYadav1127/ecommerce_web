@@ -1,6 +1,8 @@
 package com.ecommerce.project.controller;
 
 import com.ecommerce.project.model.Role;
+import com.ecommerce.project.model.User;
+import com.ecommerce.project.repositories.RoleRepository;
 import com.ecommerce.project.repositories.UserRepository;
 import com.ecommerce.project.security.jwt.JwtUtils;
 import com.ecommerce.project.security.request.LoginRequest;
@@ -18,14 +20,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
+@RestController
+@RequestMapping("/api/auth")
 public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
@@ -73,11 +77,7 @@ public class AuthController {
                     badRequest().
                     body(new MessageResponse("Error: Email is already taken!"));
         }
-        User user = new User(
-                signupRequest.getUsername(),
-                encoder.encode(signupRequest.getPassword()),
-                List.of(new SimpleGrantedAuthority("ROLE_USER"))
-        );
+        User user=new User(signupRequest.getUsername(),signupRequest.getEmail(),encoder.encode(signupRequest.getPassword()));
         Set<String> strRoles=signupRequest.getRole();
         Set<Role> roles=new HashSet<>();
         if (strRoles==null){
