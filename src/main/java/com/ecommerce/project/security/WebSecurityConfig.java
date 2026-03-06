@@ -51,7 +51,7 @@ public class WebSecurityConfig {
                 requestMatchers("/v3/api-docs/**").permitAll().
                 requestMatchers("/h2-console/**").permitAll().
                 requestMatchers("/swagger-ui/**").permitAll().
-                requestMatchers("/api/public/**").permitAll().
+//                requestMatchers("/api/public/**").permitAll().
                 requestMatchers("/api/admin/**").hasRole("ADMIN").
                 requestMatchers("/api/test/**").permitAll().
                 requestMatchers("/images/**").permitAll()
@@ -88,19 +88,19 @@ public class WebSecurityConfig {
     public CommandLineRunner initData(RoleRepository roleRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
             // Retrieve or create roles
-            Role userRole = roleRepository.findByRoleName(String.valueOf(AppRole.ROLE_USER))
+            Role userRole = roleRepository.findByRoleName(AppRole.ROLE_USER)
                     .orElseGet(() -> {
                         Role newUserRole = new Role(AppRole.ROLE_USER);
                         return roleRepository.save(newUserRole);
                     });
 
-            Role sellerRole = roleRepository.findByRoleName(String.valueOf(AppRole.ROLE_SELLER))
+            Role sellerRole = roleRepository.findByRoleName(AppRole.ROLE_ADMIN)
                     .orElseGet(() -> {
                         Role newSellerRole = new Role(AppRole.ROLE_SELLER);
                         return roleRepository.save(newSellerRole);
                     });
 
-            Role adminRole = roleRepository.findByRoleName(String.valueOf(AppRole.ROLE_ADMIN))
+            Role adminRole = roleRepository.findByRoleName(AppRole.ROLE_ADMIN)
                     .orElseGet(() -> {
                         Role newAdminRole = new Role(AppRole.ROLE_ADMIN);
                         return roleRepository.save(newAdminRole);
@@ -112,17 +112,17 @@ public class WebSecurityConfig {
 
 
             // Create users if not already present
-            if (!userRepository.existsByUsername("user1")) {
+            if (!userRepository.existsByUserName("user1")) {
                 User user1 = new User("user1", "user1@example.com", passwordEncoder.encode("password1"));
                 userRepository.save(user1);
             }
 
-            if (!userRepository.existsByUsername("seller1")) {
+            if (!userRepository.existsByUserName("seller1")) {
                 User seller1 = new User("seller1", "seller1@example.com", passwordEncoder.encode("password2"));
                 userRepository.save(seller1);
             }
 
-            if (!userRepository.existsByUsername("admin")) {
+            if (!userRepository.existsByUserName("admin")) {
                 User admin = new User("admin", "admin@example.com", passwordEncoder.encode("adminPass"));
                 userRepository.save(admin);
             }

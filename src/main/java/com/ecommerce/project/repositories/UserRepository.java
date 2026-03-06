@@ -11,9 +11,9 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository <User,Long>{
 
-    Optional<User> findByUserName(String username);
+    Optional<User> findByUserName(String userName);
 
-    boolean existsByUsername(@NotBlank @Size(min=3, message = "Username must be at least 3 characters long") String username);
+    boolean existsByUserName(@NotBlank @Size(min=3, message = "Username must be at least 3 characters long") String userName);
 
-    boolean existsByEmail(@NotBlank @Size(min=3, message = "Username must be at least 3 characters long") String username);
+    boolean existsByEmail(@NotBlank @Size(min=3, message = "Username must be at least 3 characters long") String email);
 }
