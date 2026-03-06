@@ -13,7 +13,9 @@ import com.ecommerce.project.security.response.UserInfoResponse;
 import com.ecommerce.project.security.services.UserDetailsImp;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -57,12 +59,17 @@ public class AuthController {
             return new ResponseEntity<Object>(map, HttpStatus.NOT_FOUND);
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
         UserDetailsImp userDetails=(UserDetailsImp) authentication.getPrincipal();// getPrincipal() method se currently authenticated user ke details milte hai,
         // jisme username, password, authorities (roles) etc. hote hai.
-        String jwtToken=jwtUtils.generateTokenFromUsername(userDetails);//generate JWT token using username from userDetails
+
+        org.springframework.http.ResponseCookie jwtCookie =jwtUtils.generateJwtCookie(userDetails);//generate JWT token using username from userDetails
+
         List<String> roles=userDetails.getAuthorities().stream().map(item->item.getAuthority()).collect(Collectors.toList());
-        UserInfoResponse response=new UserInfoResponse(userDetails.getId(),jwtToken,userDetails.getUsername(), roles);
-        return ResponseEntity.ok(response); //return the response with JWT token and user details
+
+        UserInfoResponse response=new UserInfoResponse(userDetails.getId(),userDetails.getUsername(), roles);
+
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE,jwtCookie.toString()).body(response); //return the response with JWT cookie and user info in the body
     }
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
