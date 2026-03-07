@@ -46,7 +46,7 @@ public class JwtUtils {
 
     public String getJwtFromCookie(HttpServletRequest request)
     {
-        Cookie cookie= WebUtils.getCookie(request,"jwtCookie");
+        Cookie cookie= WebUtils.getCookie(request,"springBootEcom");
         if (cookie!=null)
         {
             System.out.println("Cookie found: " + cookie.getName() + " = " + cookie.getValue());
@@ -64,6 +64,13 @@ public class JwtUtils {
         ResponseCookie cookie=ResponseCookie.from(jwtCookie,jwt).
                 path("/api").maxAge(24*60*60).
                 httpOnly(false).build();
+        return cookie;
+    }
+// this is used to dlt cookies when use log out
+    public ResponseCookie getCleanJwtCookie()
+    {
+        ResponseCookie cookie=ResponseCookie.from(jwtCookie,null).
+                path("/api").build();
         return cookie;
     }
 
