@@ -10,6 +10,7 @@ import com.ecommerce.project.payload.ProductDTO;
 import com.ecommerce.project.repositories.CartItemRepository;
 import com.ecommerce.project.repositories.CartRepository;
 import com.ecommerce.project.repositories.ProductRepository;
+import com.ecommerce.project.util.AuthUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,11 +66,12 @@ public class CartServiceImpl implements CartService{
 
         CartDTO cartDTO=modelMapper.map(cart,CartDTO.class);
         List<CartItem>cartItems=cart.getCartItems();
-        Stream<ProductDTO>productDTOStream=cartItems.stream().map(item -> {ProductDTO map=modelMapper.map(item.getProduct(),ProductDTO.class);
+        Stream<ProductDTO>productStream=cartItems.stream().map(item -> {ProductDTO map=modelMapper.map(item.getProduct(),ProductDTO.class);
         map.setQuantity(item.getQuantity());
         return map;
         });
-        return null;
+        cartDTO.setProducts(productStream.toList());
+        return cartDTO;
     }
 
     private Cart createCart(){
@@ -79,7 +81,7 @@ public class CartServiceImpl implements CartService{
         }
         Cart cart=new Cart();
         cart.setTotalPrice(0.0);
-        cart.setUser(authUtil.loggedInUser);
+        cart.setUser(authUtil.loggedInUser());
         Cart newCart=cartRepository.save(cart);
         return newCart;
     }
