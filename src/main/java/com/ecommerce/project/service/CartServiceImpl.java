@@ -38,10 +38,11 @@ public class CartServiceImpl implements CartService{
         Product product=productRepository.findById(productId).orElseThrow(()->
                 new ResourceNotFoundException("Product","ProductId",productId));
         //perform validation
-        CartItem cartItem=cartItemRepository.findCartItemByProductIdAndCartId(cart.getCartId(),productId);
+        CartItem cartItem = cartItemRepository
+                .findCartItemByProductIdAndCartId(productId, cart.getCartId());
         if(cartItem!=null)
         {
-            throw new APIException("Product"+ product.getProductName()+"already exists in the cart");
+            throw new APIException("Product "+ product.getProductName()+" already exists in the cart");
         }
         if(product.getQuantity()<quantity)
         {
@@ -55,10 +56,12 @@ public class CartServiceImpl implements CartService{
         newCartItem.setCart(cart);
         newCartItem.setProductPrice(product.getPrice());
         newCartItem.setDiscount(product.getDiscount());
-        newCartItem.setQuantity(product.getQuantity());
+        newCartItem.setQuantity(quantity);
         //save cart item
         cartItemRepository.save(newCartItem);
-        product.setQuantity(product.getQuantity());
+        cart.getCartItems().add(newCartItem);
+        product.setQuantity(product.getQuantity()-quantity);
+        productRepository.save(product);
         cart.setTotalPrice(cart.getTotalPrice()+(product.getSpecialPrice()*quantity));
         cartRepository.save(cart);
 
@@ -72,6 +75,21 @@ public class CartServiceImpl implements CartService{
         });
         cartDTO.setProducts(productStream.toList());
         return cartDTO;
+    }
+
+    @Override
+    public List<CartDTO> getAllCarts() {
+        List<Cart> carts=cartRepository.findAll();
+        if(carts.size()==0){
+            throw new APIException("No carts found !!");
+        }
+        List<CartDTO> cartDTOS=carts.stream().map(cart ->{ CartDTO cartDTO= modelMapper.map(cart, CartDTO.class);
+        List<ProductDTO> products=cart.getCartItems().stream().
+                map(p->modelMapper.map(p.getProduct(),ProductDTO.class)).toList();
+        cartDTO.setProducts(products);
+        return cartDTO;
+        }).toList();
+        return cartDTOS;
     }
 
     private Cart createCart(){
