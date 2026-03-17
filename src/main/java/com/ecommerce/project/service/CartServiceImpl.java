@@ -172,6 +172,19 @@ public class CartServiceImpl implements CartService{
         return cartDTO;
     }
 
+    @Override
+    public String deleteProductFromCart(Long cartId, Long productId) {
+        Cart cart=cartRepository.findById(cartId).orElseThrow(()->new ResourceNotFoundException("Cart", "cartId", cartId));
+        CartItem cartItem=cartItemRepository.findCartItemByProductIdAndCartId(productId, cartId);
+        if (cartItem==null) {
+            throw new ResourceNotFoundException("Product", "productId", productId);
+        }
+
+        cart.setTotalPrice(cart.getTotalPrice()-(cartItem.getProductPrice()*cartItem.getQuantity()));
+        cartItemRepository.deleteCartItemByProductIdAndCartId(cartId,productId);
+        return ("Product"+cartItem.getProduct().getProductName()+" is deleted from the cart !!!" );
+    }
+
     private Cart createCart(){
         Cart userCart=cartRepository.findCartByEmail(authUtil.loggedInEmail());
         if(userCart!=null){
