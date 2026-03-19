@@ -94,7 +94,7 @@ public class WebSecurityConfig {
                         return roleRepository.save(newUserRole);
                     });
 
-            Role sellerRole = roleRepository.findByRoleName(AppRole.ROLE_ADMIN)
+            Role sellerRole = roleRepository.findByRoleName(AppRole.ROLE_SELLER)
                     .orElseGet(() -> {
                         Role newSellerRole = new Role(AppRole.ROLE_SELLER);
                         return roleRepository.save(newSellerRole);

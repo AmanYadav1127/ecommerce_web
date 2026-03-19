@@ -66,7 +66,7 @@ public class JwtUtils {
                 httpOnly(false).build();
         return cookie;
     }
-// this is used to dlt cookies when use log out
+    // this is used to dlt cookies when use log out
     public ResponseCookie getCleanJwtCookie()
     {
         ResponseCookie cookie=ResponseCookie.from(jwtCookie,null).

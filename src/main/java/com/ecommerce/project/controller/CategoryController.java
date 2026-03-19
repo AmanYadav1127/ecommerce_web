@@ -1,7 +1,6 @@
 package com.ecommerce.project.controller;
 
 import com.ecommerce.project.config.AppConstants;
-import com.ecommerce.project.model.Category;
 import com.ecommerce.project.payload.CategoryDto;
 import com.ecommerce.project.payload.CategoryResponse;
 import com.ecommerce.project.service.CategoryService;
@@ -44,13 +43,13 @@ public class CategoryController {
     @DeleteMapping("/admin/categories/{categoryId}")
     public ResponseEntity<CategoryDto> deleteCategory(@PathVariable Long categoryId)
     {
-            CategoryDto deletedCategory=categoryService.deleteCategory(categoryId);
-            return new ResponseEntity<>(deletedCategory, HttpStatus.OK);
+        CategoryDto deletedCategory=categoryService.deleteCategory(categoryId);
+        return new ResponseEntity<>(deletedCategory, HttpStatus.OK);
     }
     @PutMapping("/public/categories/{categoryId}")
     public ResponseEntity<CategoryDto> updateCategory(@Valid @RequestBody CategoryDto categoryDto, @PathVariable Long categoryId){
-            CategoryDto savedCategoryDto=categoryService.updateCategory(categoryDto, categoryId);
-            return new ResponseEntity<>(savedCategoryDto, HttpStatus.OK);
+        CategoryDto savedCategoryDto=categoryService.updateCategory(categoryDto, categoryId);
+        return new ResponseEntity<>(savedCategoryDto, HttpStatus.OK);
     }
 
 }
