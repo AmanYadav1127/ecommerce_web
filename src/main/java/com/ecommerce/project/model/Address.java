@@ -38,9 +38,9 @@ public class Address {
     @NotBlank
     @Size(min = 2, message = "Country must be at least 2 characters long")
     private String country;
-    @ToString.Exclude
-    @ManyToMany(mappedBy = "addresses")
-    private List<User> users=new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Address(String street, String city, String buildingName, String state, String pinCode, String country) {
         this.street = street;
