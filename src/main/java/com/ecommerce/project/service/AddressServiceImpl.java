@@ -1,9 +1,11 @@
 package com.ecommerce.project.service;
 
+import com.ecommerce.project.exceptions.ResourceNotFoundException;
 import com.ecommerce.project.model.Address;
 import com.ecommerce.project.model.User;
 import com.ecommerce.project.payload.AddressDTO;
 import com.ecommerce.project.repositories.AddressRepository;
+import com.ecommerce.project.repositories.UserRepository;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,9 @@ public class AddressServiceImpl implements AddressService{
 
     @Autowired
     AddressRepository addressRepository;
+
+    @Autowired
+    UserRepository userRepository;
     @Override
     public AddressDTO createAddress(AddressDTO addressDTO, User user) {
         Address address=modelMapper.map(addressDTO,Address.class);
@@ -51,5 +56,23 @@ public class AddressServiceImpl implements AddressService{
     public List<AddressDTO> getAddressesByUser(User user) {
         List<Address>addresses=addressRepository.findAddressByUser(user);
         return addresses.stream().map(address -> modelMapper.map(address, AddressDTO.class)).toList();
+    }
+
+    @Override
+    public AddressDTO updateAddressById(Long addressId, AddressDTO addressDTO) {
+        Address addressFromDb=addressRepository.findById(addressId).orElseThrow(()->
+                new ResourceNotFoundException("Address","addressId",addressId));
+        addressFromDb.setStreet(addressDTO.getStreet());
+        addressFromDb.setCity(addressDTO.getCity());
+        addressFromDb.setBuildingName(addressDTO.getBuildingName());
+        addressFromDb.setState(addressDTO.getState());
+        addressFromDb.setPinCode(addressDTO.getPinCode());
+        addressFromDb.setCountry(addressDTO.getCountry());
+        Address updatedAddress=addressRepository.save(addressFromDb);
+        User user=updatedAddress.getUser();
+        user.getAddresses().removeIf(address -> address.getAddressId().equals(addressId));
+        user.getAddresses().add(updatedAddress);
+        userRepository.save(user);
+        return modelMapper.map(updatedAddress, AddressDTO.class);
     }
 }
