@@ -4,8 +4,10 @@ import com.ecommerce.project.exceptions.APIException;
 import com.ecommerce.project.exceptions.ResourceNotFoundException;
 import com.ecommerce.project.model.*;
 import com.ecommerce.project.payload.OrderDTO;
+import com.ecommerce.project.payload.OrderItemDTO;
 import com.ecommerce.project.repositories.*;
 import jakarta.transaction.Transactional;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
@@ -23,6 +25,12 @@ public class OrderServiceImpl implements OrderService{
     OrderRepository orderRepository;
     @Autowired
     OrderItemRepository orderItemRepository;
+    @Autowired
+    ProductRepository productRepository;
+    @Autowired
+    CartService cartService;
+    @Autowired
+    ModelMapper modelMapper;
     @Override
     @Transactional
     public OrderDTO placeOrder(String emailId, Long addressId, String paymentMethod, String pgName, String pgPaymentId, String pgStatus, String pgResponseMessage) {
@@ -68,8 +76,21 @@ public class OrderServiceImpl implements OrderService{
         }
         orderItemRepository.saveAll(orderItems);
         //update the stock of the product
-        //clear the cart
+
+        cart.getCartItems().forEach(item -> {
+            int quantity=item.getQuantity();
+            Product product=item.getProduct();
+            product.setQuantity(product.getQuantity()-quantity);
+            productRepository.save(product);
+            //clear the cart
+            cartService.deleteProductFromCart(cart.getCartId(),item.getProduct().getProductId());
+        });
+
         //send back the order summary
-        return null;
+        OrderDTO orderDTO=modelMapper.map(savedOrder, OrderDTO.class);
+        orderItems.forEach(item->
+                orderDTO.getOrderItems().add(modelMapper.map(item, OrderItemDTO.class)));
+        orderDTO.setOrderId(addressId);
+        return orderDTO;
     }
 }
