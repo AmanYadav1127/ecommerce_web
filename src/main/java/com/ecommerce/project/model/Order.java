@@ -1,5 +1,6 @@
 package com.ecommerce.project.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
@@ -23,6 +24,7 @@ public class Order {
     @Column(nullable = false)
     private String email;
     @OneToMany(mappedBy = "order",cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+    @JsonIgnore
     private List<OrderItem>orderItems=new ArrayList<>();
 
     private LocalDate orderDate;
