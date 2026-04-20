@@ -65,7 +65,7 @@ public class WebSecurityConfig {
         return http.build();
     }
     @Bean
-   public WebSecurityCustomizer webSecurityCustomizer(){  //use to completely ignore some endpoints from security filter chain
+    public WebSecurityCustomizer webSecurityCustomizer(){  //use to completely ignore some endpoints from security filter chain
         return (web) -> web.ignoring().requestMatchers("/v2/api-docs",
                 "/configuration/ui", "/swagger-resources/**",
                 "/configuration/security", "/swagger-ui.html", "/webjars/**");

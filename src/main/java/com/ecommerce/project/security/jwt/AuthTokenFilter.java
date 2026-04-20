@@ -35,7 +35,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {//this method is called for every incoming request, it checks for JWT token and sets authentication if valid
-    logger.debug("AuthTokenFilter called for URI: {}", request.getRequestURI());
+        logger.debug("AuthTokenFilter called for URI: {}", request.getRequestURI());
         try {
             String jwt=parseJwt(request);//extract the JWT token from the request header
             if (jwt!=null && jwtUtils.validateJwtToken(jwt))
@@ -63,4 +63,4 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         logger.debug("AuthTokenFilter.java:{}", jwt);
         return jwt;
     }
-    }
+}
