@@ -42,26 +42,48 @@ public class WebSecurityConfig {
         return new AuthTokenFilter();
     }
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-        http.csrf(csrf -> csrf.disable());
-        http.headers(headers -> headers.
-                frameOptions(frameOptions ->frameOptions.sameOrigin()));//to enable h2-console
-        http.authorizeHttpRequests((auth)->auth.
-                requestMatchers("/api/auth/**").permitAll().
-                requestMatchers("/v3/api-docs/**").permitAll().
-                requestMatchers("/h2-console/**").permitAll().
-                requestMatchers("/swagger-ui/**").permitAll().
-                requestMatchers("/api/public/**").permitAll().
-                requestMatchers("/api/admin/**").permitAll().
-                requestMatchers("/api/test/**").permitAll().
-                requestMatchers("/images/**").permitAll()
-                .anyRequest().authenticated());
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));//to manage cookies
+        http.csrf(csrf -> csrf.disable());
+
+        http.headers(headers -> headers
+                .frameOptions(frameOptions -> frameOptions.sameOrigin())); // for H2 console
+
+        http.authorizeHttpRequests(auth -> auth
+
+                // AUTH APIs
+                .requestMatchers("/api/auth/**").permitAll()
+
+                // SWAGGER (IMPORTANT FIX)
+                .requestMatchers(
+                        "/v3/api-docs/**",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html"
+                ).permitAll()
+
+                // OTHER PUBLIC APIs
+                .requestMatchers("/api/public/**").permitAll()
+                .requestMatchers("/h2-console/**").permitAll()
+                .requestMatchers("/images/**").permitAll()
+
+
+                 .requestMatchers("/api/admin/**").permitAll()
+                 .requestMatchers("/api/test/**").permitAll()
+
+                .anyRequest().authenticated()
+        );
+
+        http.sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        http.exceptionHandling(exception ->
+                exception.authenticationEntryPoint(unauthorizedHandler));
 
         http.authenticationProvider(authenticationProvider());
-        http.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler));
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);//Controller me request jaane se pehle FILTER chalega.
+
+        http.addFilterBefore(authenticationJwtTokenFilter(),
+                UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
     @Bean
