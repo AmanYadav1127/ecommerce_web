@@ -42,6 +42,9 @@ public class ProductServiceImpl implements ProductService {
     @Value("${project.image")
     private String path;
 
+    @Value("${image.base.url}")
+    private String imageBaseUrl;
+
     @Override
     public ProductDTO addProduct(Long categoryId, ProductDTO productDTO) {
         Category category = categoryRepository.findById(categoryId).orElseThrow(() ->
@@ -77,7 +80,11 @@ public class ProductServiceImpl implements ProductService {
         Pageable pageDetails= PageRequest.of(pageNumber, pageSize, sortByAndOrder);
         Page<Product>pageProducts=productRepository.findAll(pageDetails);
         List<Product> products = pageProducts.getContent();
-        List<ProductDTO> productDTOS = products.stream().map(product -> modelMapper.map(product, ProductDTO.class))
+        List<ProductDTO> productDTOS = products.stream().map(product ->{ProductDTO productDTO= modelMapper.
+                map(product, ProductDTO.class);
+            productDTO.setImage(constructImageUrl(product.getImage()));
+            return productDTO;
+            })
                 .toList(); //ProductDTO me change isliye kyuki ProductResponse me DTO return ho rha
 //        if (products.isEmpty())
 //        {
@@ -91,6 +98,10 @@ public class ProductServiceImpl implements ProductService {
         productResponse.setTotalPages(pageProducts.getTotalPages());
         productResponse.setLastPage(pageProducts.isLast());
         return productResponse;
+    }
+
+    private String constructImageUrl(String imageName){
+        return imageName.endsWith("/") ? imageBaseUrl + imageName : imageBaseUrl + "/" + imageName;
     }
 
     @Override
