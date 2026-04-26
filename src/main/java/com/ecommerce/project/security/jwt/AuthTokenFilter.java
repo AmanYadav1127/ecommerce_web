@@ -45,6 +45,13 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 //            filterChain.doFilter(request, response);
 //            return;
 //        }
+
+//        String path = request.getRequestURI();
+//
+//        if (path.contains("/images/")) {
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
         logger.debug("AuthTokenFilter called for URI: {}", request.getRequestURI());
         try {
             String jwt=parseJwt(request);//extract the JWT token from the request header
