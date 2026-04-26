@@ -207,6 +207,7 @@ public class ProductServiceImpl implements ProductService {
         //Upload the image to the server and get the image URL
         //Get the file name of the uploaded image
 //        String path = "images/"; is line ki jrurat nhi beacuse ham isko app.properties se control krrhe
+        String path="images/";
         String fileName = fileService.uploadImage(path,image);
         //updating the new file name to the product
         productFromDb.setImage(fileName);
@@ -215,4 +216,5 @@ public class ProductServiceImpl implements ProductService {
         //return dto after mapping product to dto
         return modelMapper.map(updatedProduct, ProductDTO.class);
     }
+
 }
