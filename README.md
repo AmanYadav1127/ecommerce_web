@@ -74,7 +74,7 @@ Controller → Service → Repository → Database
 
 - Backend: Java, Spring Boot  
 - Security: Spring Security, JWT  
-- Database: JPA / Hibernate  
+- Database: JPA / Hibernate / MY SQL 
 - Build Tool: Maven / Gradle  
 - Architecture: RESTful APIs  
 
